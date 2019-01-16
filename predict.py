@@ -8,6 +8,25 @@ import argparse
 import pickle
 import cv2
 
+"""
+
+--model /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn.model
+--label-bin /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_lb.pickle
+--image /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/images/cat.jpg
+--width 32
+--height 32
+--flatten 1
+
+
+--model /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/output/smallvggnet.model
+--label-bin /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/output/smallvggnet_lb.pickle
+--image /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/images/cat.jpg
+--width 32
+--height 32
+--flatten 1
+
+
+"""
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True,

@@ -8,7 +8,7 @@ matplotlib.use("Agg")
 # import the necessary packages
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.optimizers import SGD
@@ -21,6 +21,13 @@ import pickle
 import cv2
 import os
 
+"""
+--dataset /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/animals
+--model /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn.model
+--label-bin /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_lb.pickle
+--plot /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_plot.png
+
+"""
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
@@ -99,6 +106,9 @@ H = model.fit(trainX, trainY, validation_data=(testX, testY),
 # evaluate the network
 print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=32)
+testY_values = testY.argmax(axis=1)
+prediction_values = predictions.argmax(axis=1)
+print(f'Accuracy: {accuracy_score(testY_values, prediction_values)}')
 print(classification_report(testY.argmax(axis=1),
 	predictions.argmax(axis=1), target_names=lb.classes_))
 

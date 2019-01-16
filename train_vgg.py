@@ -21,6 +21,14 @@ import pickle
 import cv2
 import os
 
+"""
+--dataset /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/animals
+--model /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet.model
+--label-bin /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet_lb.pickle
+--plot /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet_plot.png
+
+"""
+
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
