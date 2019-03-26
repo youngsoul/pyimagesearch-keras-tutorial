@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 from keras.models import Sequential
-from keras.layers.core import Dense
+from keras.layers.core import Dense, Dropout
 from keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
@@ -83,8 +83,16 @@ testY = lb.transform(testY)
 
 # define the 3072-1024-512-3 architecture using Keras
 model = Sequential()
-model.add(Dense(1024, input_shape=(3072,), activation="sigmoid"))
-model.add(Dense(512, activation="sigmoid"))
+# model.add(Dense(1024, input_shape=(3072,), activation="sigmoid"))
+# model.add(Dense(512, activation="sigmoid"))
+model.add(Dense(1024, input_shape=(3072,), activation="relu"))
+model.add(Dense(512, activation="relu"))
+model.add(Dropout(0.25))
+model.add(Dense(512, activation="relu"))
+model.add(Dropout(0.25))
+model.add(Dense(128, activation="relu"))
+
+
 model.add(Dense(len(lb.classes_), activation="softmax"))
 
 # initialize our initial learning rate and # of epochs to train for
