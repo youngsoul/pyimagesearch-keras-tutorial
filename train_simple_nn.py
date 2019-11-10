@@ -1,17 +1,24 @@
 # USAGE
-# python train_simple_nn.py --dataset animals --model output/simple_nn.model --label-bin output/simple_nn_lb.pickle --plot output/simple_nn_plot.png
+# --dataset
+# /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/animals
+# --model
+# /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn.h5
+# --label-bin
+# /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_lb.pickle
+# --plot
+# /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_plot.png
+
 
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
 matplotlib.use("Agg")
+import tensorflow as tf
+from tensorflow import keras
 
 # import the necessary packages
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout
-from keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,9 +28,12 @@ import pickle
 import cv2
 import os
 
+layers = tf.keras.layers
+models = tf.keras.models
+
 """
 --dataset /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/animals
---model /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn.model
+--model /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn.h5
 --label-bin /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_lb.pickle
 --plot /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/simple_nn_plot.png
 
@@ -50,13 +60,18 @@ imagePaths = sorted(list(paths.list_images(args["dataset"])))
 random.seed(42)
 random.shuffle(imagePaths)
 
+height = 32
+width = 32
+color_channels = 3
+
+dim = (width, height)
 # loop over the input images
 for imagePath in imagePaths:
 	# load the image, resize the image to be 32x32 pixels (ignoring
 	# aspect ratio), flatten the image into 32x32x3=3072 pixel image
 	# into a list, and store the image in the data list
 	image = cv2.imread(imagePath)
-	image = cv2.resize(image, (32, 32)).flatten()
+	image = cv2.resize(image, dim).flatten()
 	data.append(image)
 
 	# extract the class label from the image path and update the
@@ -82,34 +97,40 @@ trainY = lb.fit_transform(trainY)
 testY = lb.transform(testY)
 
 # define the 3072-1024-512-3 architecture using Keras
-model = Sequential()
-# model.add(Dense(1024, input_shape=(3072,), activation="sigmoid"))
-# model.add(Dense(512, activation="sigmoid"))
-model.add(Dense(1024, input_shape=(3072,), activation="relu"))
-model.add(Dense(512, activation="relu"))
-model.add(Dropout(0.25))
-model.add(Dense(512, activation="relu"))
-model.add(Dropout(0.25))
-model.add(Dense(128, activation="relu"))
+model = models.Sequential()
+
+# pyimagesearch original model
+# 3072 = 32*32*3
+# , kernel_regularizer=keras.regularizers.l1(l=0.1)
+model.add(layers.Dense(1024, input_shape=((height * width * color_channels),), activation="sigmoid"))
+model.add(layers.Dropout(0.2))
+model.add(layers.Dense(512, activation="sigmoid"))
+
+# my model
+# model.add(layers.Dense(1024, input_shape=(3072,), activation="relu"))
+# model.add(layers.Dense(512, activation="relu"))
+# model.add(layers.Dropout(0.25))
+# model.add(layers.Dense(512, activation="relu"))
+# model.add(layers.Dropout(0.25))
+# model.add(layers.Dense(128, activation="relu"))
 
 
-model.add(Dense(len(lb.classes_), activation="softmax"))
+model.add(layers.Dense(len(lb.classes_), activation="softmax"))
 
 # initialize our initial learning rate and # of epochs to train for
 INIT_LR = 0.01
-EPOCHS = 75
+EPOCHS = 100
 
 # compile the model using SGD as our optimizer and categorical
 # cross-entropy loss (you'll want to use binary_crossentropy
 # for 2-class classification)
 print("[INFO] training network...")
-opt = SGD(lr=INIT_LR)
+opt = tf.keras.optimizers.SGD(lr=INIT_LR)
 model.compile(loss="categorical_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
 # train the neural network
-H = model.fit(trainX, trainY, validation_data=(testX, testY),
-	epochs=EPOCHS, batch_size=32)
+H = model.fit(trainX, trainY, validation_data=(testX, testY), epochs=EPOCHS, batch_size=32)
 
 # evaluate the network
 print("[INFO] evaluating network...")
@@ -126,8 +147,8 @@ plt.style.use("ggplot")
 plt.figure()
 plt.plot(N, H.history["loss"], label="train_loss")
 plt.plot(N, H.history["val_loss"], label="val_loss")
-plt.plot(N, H.history["acc"], label="train_acc")
-plt.plot(N, H.history["val_acc"], label="val_acc")
+plt.plot(N, H.history["accuracy"], label="train_acc")
+plt.plot(N, H.history["val_accuracy"], label="val_acc")
 plt.title("Training Loss and Accuracy (Simple NN)")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
@@ -137,6 +158,7 @@ plt.savefig(args["plot"])
 # save the model and label binarizer to disk
 print("[INFO] serializing network and label binarizer...")
 model.save(args["model"])
+
 f = open(args["label_bin"], "wb")
 f.write(pickle.dumps(lb))
 f.close()
