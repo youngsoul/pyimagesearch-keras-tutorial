@@ -36,3 +36,55 @@ model.add(Dense(128, activation="relu"))
 model.add(Dense(len(lb.classes_), activation="softmax"))
 
 ```
+
+## PyimageSearch Keras Version
+
+- See `train_simple_nn_adrian.py`
+
+Model results:
+```text
+[INFO] evaluating network...
+              precision    recall  f1-score   support
+
+        cats       0.60      0.43      0.50       258
+        dogs       0.48      0.54      0.51       234
+       panda       0.71      0.84      0.77       258
+
+    accuracy                           0.60       750
+   macro avg       0.60      0.60      0.59       750
+weighted avg       0.60      0.60      0.60       750
+
+```
+
+## TensorFlow2 version
+
+- See `train_simple_nn.py`
+
+Model results:
+```text
+[INFO] evaluating network...
+Accuracy: 0.5986666666666667
+              precision    recall  f1-score   support
+
+        cats       0.53      0.69      0.60       258
+        dogs       0.47      0.22      0.30       234
+       panda       0.71      0.85      0.78       258
+
+    accuracy                           0.60       750
+   macro avg       0.57      0.59      0.56       750
+weighted avg       0.58      0.60      0.57       750
+```
+
+```text
+[INFO] evaluating network...
+Accuracy: 0.5933333333333334
+              precision    recall  f1-score   support
+
+        cats       0.54      0.64      0.58       258
+        dogs       0.51      0.22      0.31       234
+       panda       0.67      0.88      0.76       258
+
+    accuracy                           0.59       750
+   macro avg       0.57      0.58      0.55       750
+weighted avg       0.57      0.59      0.56       750
+```

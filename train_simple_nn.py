@@ -103,7 +103,7 @@ model = models.Sequential()
 # 3072 = 32*32*3
 # , kernel_regularizer=keras.regularizers.l1(l=0.1)
 model.add(layers.Dense(1024, input_shape=((height * width * color_channels),), activation="sigmoid"))
-model.add(layers.Dropout(0.2))
+# model.add(layers.Dropout(0.2))  # add dropout to control overfitting
 model.add(layers.Dense(512, activation="sigmoid"))
 
 # my model
@@ -119,7 +119,7 @@ model.add(layers.Dense(len(lb.classes_), activation="softmax"))
 
 # initialize our initial learning rate and # of epochs to train for
 INIT_LR = 0.01
-EPOCHS = 100
+EPOCHS = 75
 
 # compile the model using SGD as our optimizer and categorical
 # cross-entropy loss (you'll want to use binary_crossentropy

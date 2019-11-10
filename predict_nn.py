@@ -5,6 +5,9 @@ import cv2
 
 height = 32
 width = 32
+# nn_model = 'myoutput/simple_nn_adrian.h5'
+# nn_labels = 'myoutput/simple_nn_adrian_lb.pickle'
+
 nn_model = 'myoutput/simple_nn.h5'
 nn_labels = 'myoutput/simple_nn_lb.pickle'
 
