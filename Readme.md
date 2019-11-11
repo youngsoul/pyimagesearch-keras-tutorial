@@ -88,3 +88,33 @@ Accuracy: 0.5933333333333334
    macro avg       0.57      0.58      0.55       750
 weighted avg       0.57      0.59      0.56       750
 ```
+
+## Convolutional SmallVGGNet
+
+- See ./pyimagesearch/smallvggnet.py
+
+```text
+[INFO] evaluating network...
+              precision    recall  f1-score   support
+
+        cats       0.65      0.85      0.74       258
+        dogs       0.74      0.41      0.52       234
+       panda       0.86      0.94      0.90       258
+
+    accuracy                           0.74       750
+   macro avg       0.75      0.73      0.72       750
+weighted avg       0.75      0.74      0.73       750
+```
+
+```text
+[INFO] evaluating network...
+              precision    recall  f1-score   support
+
+        cats       0.64      0.72      0.68       258
+        dogs       0.67      0.14      0.23       234
+       panda       0.63      0.99      0.77       258
+
+    accuracy                           0.63       750
+   macro avg       0.65      0.62      0.56       750
+weighted avg       0.65      0.63      0.57       750
+```

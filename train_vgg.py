@@ -4,6 +4,7 @@
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
 matplotlib.use("Agg")
+import tensorflow as tf
 
 # import the necessary packages
 from pyimagesearch.smallvggnet import SmallVGGNet
@@ -27,6 +28,14 @@ import os
 --label-bin /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet_lb.pickle
 --plot /Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet_plot.png
 
+--dataset
+/Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/animals
+--model
+/Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet.model
+--label-bin
+/Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet_lb.pickle
+--plot
+/Users/patrickryan/Development/python/mygithub/pyimagesearch-keras-tutorial/myoutput/smallvggnet_plot.png
 """
 
 # construct the argument parser and parse the arguments
@@ -45,6 +54,9 @@ args = vars(ap.parse_args())
 print("[INFO] loading images...")
 data = []
 labels = []
+height = 64
+width = 64
+color_channels = 3
 
 # grab the image paths and randomly shuffle them
 imagePaths = sorted(list(paths.list_images(args["dataset"])))
@@ -57,7 +69,8 @@ for imagePath in imagePaths:
 	# spatial dimensions of SmallVGGNet), and store the image in the
 	# data list
 	image = cv2.imread(imagePath)
-	image = cv2.resize(image, (64, 64))
+	image = cv2.resize(image, (height, width))  # DO NOT flatten like we do for a FNN.  Because we are performing
+												# convolutions, we need to keep it as a matrix.
 	data.append(image)
 
 	# extract the class label from the image path and update the
@@ -83,7 +96,7 @@ trainY = lb.fit_transform(trainY)
 testY = lb.transform(testY)
 
 # construct the image generator for data augmentation
-aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
+aug = tf.keras.preprocessing.image.ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
 	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
 	horizontal_flip=True, fill_mode="nearest")
 
@@ -100,14 +113,14 @@ BS = 32
 # initialize the model and optimizer (you'll want to use
 # binary_crossentropy for 2-class classification)
 print("[INFO] training network...")
-opt = SGD(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+opt = tf.keras.optimizers.SGD(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+
 model.compile(loss="categorical_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
 
 # train the network
 H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
-	validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,
-	epochs=EPOCHS)
+	validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS, epochs=EPOCHS)
 
 # evaluate the network
 print("[INFO] evaluating network...")
@@ -121,8 +134,8 @@ plt.style.use("ggplot")
 plt.figure()
 plt.plot(N, H.history["loss"], label="train_loss")
 plt.plot(N, H.history["val_loss"], label="val_loss")
-plt.plot(N, H.history["acc"], label="train_acc")
-plt.plot(N, H.history["val_acc"], label="val_acc")
+plt.plot(N, H.history["accuracy"], label="train_acc")
+plt.plot(N, H.history["val_accuracy"], label="val_acc")
 plt.title("Training Loss and Accuracy (SmallVGGNet)")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
